@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Meal Plan - FreshPlan</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .plan-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .plan-item {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f1f5f9;
+        }
+
+        .plan-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .plan-item-info {
+            flex: 1;
+        }
+
+        .plan-item-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-card {
+            padding: 2.5rem;
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        .summary-box {
+            background: #F8FAFC;
+            padding: 1.5rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-row .label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--slate);
+        }
+
+        .summary-row .value {
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 8rem 2rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .remove-btn {
+            background: #FEF2F2;
+            color: #EF4444;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .remove-btn:hover {
+            background: #EF4444;
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        @media (max-width: 992px) {
+            .plan-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <span
+                style="background:var(--primary); color:white; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:1.2rem;">F</span>
+            FreshPlan
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="meal-plan.html" class="active">My Plan</a>
+            <a href="about.html">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="meal-plan.html" class="plan-badge-container">
+                <span>My Plan</span>
+                <span id="meal-plan-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="fade-in">
+        <section>
+            <h1 class="section-title">Your Nutrition Dashboard</h1>
+            <p class="section-subtitle">Review your weekly selection and track your health metrics in real-time.</p>
+
+            <div id="plan-container" class="plan-layout">
+                <div id="items-list">
+                    <!-- Items injected here -->
+                </div>
+
+                <div id="summary-container" class="card summary-card">
+                    <h3 style="margin-bottom:2rem;">Plan Summary</h3>
+
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span class="label">Total Recipes</span>
+                            <span class="value" id="total-count">0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Kitchen Time</span>
+                            <span class="value"><span id="total-time">0</span> <small>MINS</small></span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Calorie Goal</span>
+                            <span class="value" style="color:var(--primary)"><span id="total-calories">0</span>
+                                <small>KCAL</small></span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width:100%; margin-top:2rem;"
+                        onclick="alert('Exporting your smart list...')">Download Shopping List</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top:0.75rem;" onclick="clearPlan()">Clear
+                        Board</button>
+                </div>
+            </div>
+
+            <div id="empty-state" class="empty-state card" style="display:none;">
+                <div style="font-size:4rem; margin-bottom:1.5rem;">🥗</div>
+                <h2>Your plan is currently a blank canvas</h2>
+                <p style="margin: 1.5rem 0 2.5rem; color:var(--slate);">Start adding delicious recipes to your weekly
+                    dashboard to track nutrition perfectly.</p>
+                <a href="recipes.html" class="btn btn-primary" style="padding: 1rem 3rem;">Discover Recipes</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            &copy; 2024 FreshPlan. Crafted for Your Health.
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPlan();
+        });
+
+        const renderPlan = () => {
+            const plan = getMealPlan();
+            const listElement = document.getElementById('items-list');
+            const layout = document.getElementById('plan-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (plan.length === 0) {
+                layout.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            layout.style.display = 'grid';
+            emptyState.style.display = 'none';
+            listElement.innerHTML = '';
+
+            let totalTime = 0;
+            let totalCalories = 0;
+
+            plan.forEach(recipe => {
+                totalTime += recipe.prepTime;
+                totalCalories += recipe.calories;
+
+                const item = document.createElement('div');
+                item.className = 'card plan-item';
+                item.innerHTML = `
+                    <img src="${recipe.image}" alt="${recipe.name}">
+                    <div class="plan-item-info">
+                        <h3>${recipe.name}</h3>
+                        <div style="display:flex; gap:1.5rem; margin-top:0.5rem; color:var(--slate); font-size:0.9rem;">
+                            <span>⏱️ ${recipe.prepTime}m</span>
+                            <span>🔥 ${recipe.calories}kcal</span>
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="handleRemove(${recipe.id})">Remove</button>
+                `;
+                listElement.appendChild(item);
+            });
+
+            document.getElementById('total-count').textContent = plan.length;
+            document.getElementById('total-time').textContent = totalTime;
+            document.getElementById('total-calories').textContent = totalCalories;
+        };
+
+        const handleRemove = (id) => {
+            removeFromMealPlan(id);
+            renderPlan();
+            updateCartBadge();
+        };
+
+        const clearPlan = () => {
+            if (confirm("Reset your meal board?")) {
+                localStorage.removeItem(MEAL_PLAN_KEY);
+                renderPlan();
+                updateCartBadge();
+            }
+        };
+    </script>
+</body>
+
+</html>

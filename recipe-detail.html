@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details - FreshPlan</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: none;
+        }
+
+        .detail-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding: 2.5rem;
+            background: white;
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .detail-info h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .benefits {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .benefit-tag {
+            background: #ECFDF5;
+            color: var(--primary-dark);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .stats-box {
+            display: flex;
+            background: #F8FAFC;
+            padding: 2rem;
+            border-radius: 20px;
+            justify-content: space-around;
+            border: 1px solid #f1f5f9;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--slate);
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-divider {
+            width: 1px;
+            background: #e2e8f0;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+            padding: 4rem;
+            background: #FAFAFA;
+        }
+
+        .ingredients-list {
+            list-style: none;
+        }
+
+        .ingredients-list li {
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--slate);
+        }
+
+        .instructions-list {
+            counter-reset: steps;
+        }
+
+        .instructions-list li {
+            list-style: none;
+            position: relative;
+            padding-left: 4.5rem;
+            margin-bottom: 2rem;
+            color: var(--slate);
+        }
+
+        .instructions-list li::before {
+            counter-increment: steps;
+            content: counter(steps);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary);
+            color: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .detail-header,
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-image {
+                height: 350px;
+            }
+
+            .detail-info h1 {
+                font-size: 2.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <span
+                style="background:var(--primary); color:white; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:1.2rem;">F</span>
+            FreshPlan
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="meal-plan.html">My Plan</a>
+            <a href="about.html">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="meal-plan.html" class="plan-badge-container">
+                <span>My Plan</span>
+                <span id="meal-plan-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="fade-in">
+        <div style="padding: 2rem 8%;">
+            <a href="recipes.html"
+                style="color:var(--primary); text-decoration:none; display:flex; align-items:center; gap:8px; margin-bottom:2rem; font-weight:600; font-size:0.95rem;">
+                <span
+                    style="background:#ECFDF5; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%;">←</span>
+                Back to Recipes
+            </a>
+
+            <div id="loading" style="text-align:center; padding: 5rem;">
+                <div style="margin-bottom:1rem; font-size:2rem; animation: spin 1s linear infinite;">🍃</div>
+                <p>Curating recipe details...</p>
+            </div>
+
+            <div id="recipe-content" class="detail-container card" style="display:none;">
+                <div class="detail-header">
+                    <img id="detail-img" src="" alt="" class="detail-image">
+                    <div class="detail-info">
+                        <h1 id="detail-name"></h1>
+                        <div class="benefits" id="detail-dietary"></div>
+
+                        <div class="stats-box">
+                            <div class="stat-item">
+                                <span class="stat-label">PREP TIME</span>
+                                <span class="stat-value"><span id="detail-time"></span> <small>MINS</small></span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-label">CALORIES</span>
+                                <span class="stat-value"><span id="detail-calories"></span> <small>KCAL</small></span>
+                            </div>
+                        </div>
+
+                        <button id="add-to-plan-btn" class="btn btn-primary"
+                            style="width:100%; margin-top:2rem; padding:1.25rem;">Add to My Weekly Plan</button>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <div>
+                        <h3 style="display:flex; align-items:center; gap:10px;"><span
+                                style="color:var(--primary)">🛒</span> Ingredients</h3>
+                        <ul id="ingredients-list" class="ingredients-list" style="margin-top:1.5rem;"></ul>
+                    </div>
+                    <div>
+                        <h3 style="display:flex; align-items:center; gap:10px;"><span
+                                style="color:var(--primary)">👨‍🍳</span> Instructions</h3>
+                        <ol id="instructions-list" class="instructions-list" style="margin-top:1.5rem;"></ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            &copy; 2024 FreshPlan. Crafted for Your Health.
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recipeId = parseInt(getUrlParam('id'));
+
+            const renderDetails = () => {
+                const recipe = window.recipesData.find(r => r.id === recipeId);
+
+                if (!recipe) {
+                    document.getElementById('loading').innerHTML = '<div style="background:white; padding:4rem; border-radius:30px;"><h2>Recipe not found</h2><p style="margin:1rem 0 2rem; color:var(--slate)">This recipe might have been moved or removed.</p><a href="recipes.html" class="btn btn-primary">Go to Recipes</a></div>';
+                    return;
+                }
+
+                document.title = `${recipe.name} - FreshPlan`;
+                document.getElementById('detail-name').textContent = recipe.name;
+                document.getElementById('detail-img').src = recipe.image;
+                document.getElementById('detail-img').alt = recipe.name;
+                document.getElementById('detail-time').textContent = recipe.prepTime;
+                document.getElementById('detail-calories').textContent = recipe.calories;
+
+                const dietaryContainer = document.getElementById('detail-dietary');
+                dietaryContainer.innerHTML = '';
+                recipe.dietary.forEach(diet => {
+                    const tag = document.createElement('span');
+                    tag.className = 'benefit-tag';
+                    tag.textContent = diet;
+                    dietaryContainer.appendChild(tag);
+                });
+
+                const ingredientsUl = document.getElementById('ingredients-list');
+                ingredientsUl.innerHTML = '';
+                recipe.ingredients.forEach(ing => {
+                    const li = document.createElement('li');
+                    li.textContent = ing;
+                    ingredientsUl.appendChild(li);
+                });
+
+                const instructionsOl = document.getElementById('instructions-list');
+                instructionsOl.innerHTML = '';
+                recipe.instructions.forEach(step => {
+                    if (step.trim().length >= 10) {
+                        const li = document.createElement('li');
+                        li.textContent = step;
+                        instructionsOl.appendChild(li);
+                    }
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('recipe-content').style.display = 'block';
+
+                document.getElementById('add-to-plan-btn').onclick = () => {
+                    addToMealPlan(recipe);
+                };
+            };
+
+            if (window.recipesData && window.recipesData.length > 0) {
+                renderDetails();
+            } else {
+                window.addEventListener('recipesReady', renderDetails);
+            }
+        });
+    </script>
+</body>
+
+</html>
