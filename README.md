@@ -1,4 +1,4 @@
-# Project Report: FreshPlan - Recipe Meal Planner
+Meal Planner
 
 ## Purpose of the Website
 FreshPlan is an interactive web application designed to help users manage their healthy eating habits. The primary goal is to provide a user-friendly platform where individuals can browse a curated list of healthy recipes, filter them based on dietary preferences (Vegan, Vegetarian, Gluten-Free), and organize them into a personalized meal plan. The app automatically calculates nutrition totals to help users stay on track with their health goals.
@@ -28,3 +28,4 @@ FreshPlan is an interactive web application designed to help users manage their 
 
 ## Conclusion
 This project demonstrates a comprehensive understanding of front-end development by combining semantic structure, modern layout techniques, and interactive logic to solve a real-world problem.
+
